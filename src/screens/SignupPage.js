@@ -10,8 +10,11 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
+import { useNavigation } from '@react-navigation/native';
 
 export default function SignupScreen() {
+    const navigation = useNavigation();
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [birthday, setBirthday] = useState(null);
@@ -31,6 +34,12 @@ export default function SignupScreen() {
       setAvatar(result.assets[0].uri);
     }
   };
+
+  const handleConfirm = () => {
+    navigation.replace('MainTabs'); // Navigates to Discover tab
+  };
+  
+
 
   const handleDateChange = (_, selectedDate) => {
     setShowPicker(Platform.OS === 'ios');
@@ -94,7 +103,7 @@ export default function SignupScreen() {
         </View>
       )}
 
-      <TouchableOpacity style={styles.confirmButton}>
+      <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
         <Text style={styles.confirmText}>Confirm</Text>
       </TouchableOpacity>
     </View>
