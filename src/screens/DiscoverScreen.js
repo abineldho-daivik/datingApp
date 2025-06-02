@@ -1,11 +1,28 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+// src/screens/DiscoverScreen.js
+
+import React, { useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  SafeAreaView,
+  Dimensions,
+} from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
+import Swiper from 'react-native-deck-swiper';
+import profiles from '../screens/profilepeoples.js'; 
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
 
 export default function DiscoverScreen({ navigation }) {
+  const swiperRef = useRef(null);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        {/* Top Bar */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.navigate('Home')}>
             <Ionicons name="chevron-back" size={24} color="black" />
@@ -19,30 +36,103 @@ export default function DiscoverScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* Profile Card */}
-        <View style={styles.card}>
-          <Image
-            source={require('../assets/girl3.jpg')}
-            style={styles.profileImage}
+        {/* Swiper */}
+        <View style={styles.swiperContainer}>
+          <Swiper
+            ref={swiperRef}
+            cards={profiles}
+            stackSize={3}
+            infinite={false}
+            backgroundColor="transparent"
+            verticalSwipe={false}
+            onSwipedAll={() => console.log('All swiped')}
+            cardStyle={styles.cardStyle}
+            containerStyle={styles.swiper}
+            renderCard={(card) => {
+              if (!card) {
+                return (
+                  <View style={[styles.card, { justifyContent: 'center', alignItems: 'center' }]}>
+                    <Text style={{ color: 'white', fontSize: 18 }}>No more profiles</Text>
+                  </View>
+                );
+              }
+
+              return (
+                <View style={styles.card}>
+                  <Image source={card.image} style={styles.profileImage} />
+                  <View style={styles.distanceBadge}>
+                    <Text style={styles.distanceText}>{card.distance}</Text>
+                  </View>
+                  <View style={styles.cardInfo}>
+                    <Text style={styles.name}>
+                      {card.name}, {card.age}
+                    </Text>
+                    <Text style={styles.occupation}>{card.occupation}</Text>
+                  </View>
+                </View>
+              );
+            }}
+            overlayLabels={{
+              left: {
+                title: 'NOPE',
+                style: {
+                  label: {
+                    backgroundColor: 'red',
+                    color: 'white',
+                    fontSize: 24,
+                    padding: 10,
+                  },
+                  wrapper: {
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-start',
+                    marginTop: 40,
+                    marginLeft: -20,
+                  },
+                },
+              },
+              right: {
+                title: 'LIKE',
+                style: {
+                  label: {
+                    backgroundColor: '#4CAF50',
+                    color: 'white',
+                    fontSize: 24,
+                    padding: 10,
+                  },
+                  wrapper: {
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    justifyContent: 'flex-start',
+                    marginTop: 20,
+                    marginLeft: 20,
+                  },
+                },
+              },
+            }}
           />
-          <View style={styles.distanceBadge}>
-            <Text style={styles.distanceText}>4 km</Text>
-          </View>
-          <View style={styles.cardInfo}>
-            <Text style={styles.name}>Jessica Parker, 23</Text>
-            <Text style={styles.occupation}>Professional model</Text>
-          </View>
         </View>
 
         {/* Action Buttons */}
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.iconBtn}>
+          <TouchableOpacity
+            style={styles.iconBtn}
+            onPress={() => swiperRef.current?.swipeLeft()}
+          >
             <Ionicons name="close" size={26} color="#ff935c" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.likeBtn}>
+          <TouchableOpacity
+            style={styles.likeBtn}
+            onPress={() => swiperRef.current?.swipeRight()}
+          >
             <Ionicons name="heart" size={28} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconBtn}>
+          <TouchableOpacity
+            style={styles.iconBtn}
+            onPress={() => {
+              // Optional super-like logic
+            }}
+          >
             <Ionicons name="star" size={26} color="#8c52ff" />
           </TouchableOpacity>
         </View>
@@ -50,6 +140,9 @@ export default function DiscoverScreen({ navigation }) {
     </SafeAreaView>
   );
 }
+
+const CARD_WIDTH = SCREEN_WIDTH - 70;
+const CARD_HEIGHT = SCREEN_HEIGHT - 340;
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -77,16 +170,30 @@ const styles = StyleSheet.create({
     color: 'gray',
     textAlign: 'center',
   },
+  swiperContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  swiper: {
+    backgroundColor: 'transparent',
+  },
+  cardStyle: {
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
+  },
   card: {
     flex: 1,
     backgroundColor: '#000',
-    borderRadius: 20,
+    borderRadius: 10,
+    bottom: 35,
     overflow: 'hidden',
     position: 'relative',
   },
   profileImage: {
     width: '100%',
     height: '100%',
+    resizeMode: 'cover',
   },
   distanceBadge: {
     position: 'absolute',
@@ -120,8 +227,9 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginVertical: 42,
+    marginVertical: 40,
     alignItems: 'center',
+    bottom: 20,
   },
   iconBtn: {
     backgroundColor: '#fff',
