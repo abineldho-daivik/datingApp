@@ -6,9 +6,10 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
@@ -39,9 +40,10 @@ const slides = [
   },
 ];
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef(null);
+  const navigation = useNavigation();
 
   const handleScroll = (event) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -61,6 +63,9 @@ const HomeScreen = ({ navigation }) => {
     return () => clearInterval(interval);
   }, [currentIndex]);
 
+  const handleNavigateToSignup = () => {
+    navigation.navigate('Signup');}
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -79,16 +84,16 @@ const HomeScreen = ({ navigation }) => {
                 <View style={styles.leftImageContainer}>
                   <Image source={item.leftImage} style={styles.sideImage} />
                 </View>
-                
+
                 <View style={styles.mainImageContainer}>
                   <Image source={item.image} style={styles.mainImage} />
                 </View>
-                
+
                 <View style={styles.rightImageContainer}>
                   <Image source={item.rightImage} style={styles.sideImage} />
                 </View>
               </View>
-              
+
               <Text style={styles.heading}>{item.title}</Text>
               <Text style={styles.description}>{item.description}</Text>
             </View>
@@ -104,7 +109,7 @@ const HomeScreen = ({ navigation }) => {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleNavigateToSignup}>
           <Text style={styles.buttonText}>Create an account</Text>
         </TouchableOpacity>
 

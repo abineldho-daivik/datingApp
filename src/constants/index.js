@@ -10,6 +10,7 @@ export const APP_CONSTANTS = {
     MATCHES: 'Matches',
     CHAT: 'Chat',
     SETTINGS: 'Settings',
+    SIGNUP: 'SignUp',
   },
 };
 
